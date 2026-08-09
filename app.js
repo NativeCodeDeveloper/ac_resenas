@@ -3,9 +3,24 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import resenaRoutes from './routes/resenaRoutes.js'; // Importamos las rutas de resena
 
+
+
 dotenv.config();
 
 const app = express();
+
+// Configuración de CORS para permitir solicitudes desde cualquier origen
+// Defino link especificos o dominio que puede consumir este backend
+const opcionesCors = {
+    origin: [
+        'http://localhost:3000', 
+        'https://agendaclinicas.cl',
+        'https://www.agendaclinicas.cl',
+        'https://nativecode-finance.agendaclinicas.cl/dashboard'
+
+    ]
+
+}
 
 app.use(cors());
 app.use(express.json());
@@ -18,8 +33,11 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+
+// Un solo listen que levanta la IP universal '0.0.0.0' (necesaria para Linux)
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`\n======================================================`);
-    console.log(`Servidor activo en: http://localhost:${PORT}`);
+    console.log(`Servidor de agendaclinicas.cl activo`);
+    console.log(`Escuchando en la red interna del puerto: ${PORT}`);
     console.log(`======================================================\n`);
 });
