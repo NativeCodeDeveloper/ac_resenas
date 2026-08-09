@@ -29,7 +29,7 @@ app.use(express.json());
 app.use('/resena', resenaRoutes);
 
 app.get('/', (req, res) => {
-    res.json({ ok: true, mensaje: "Backend de agendaclinicas.cl corriendo perfectamente" });
+    res.json({ ok: true, mensaje: "ACRESEÑAS corriendo perfectamente" });
 });
 
 const PORT = process.env.PORT || 3001;
@@ -37,7 +37,7 @@ const PORT = process.env.PORT || 3001;
 // Un solo listen que levanta la IP universal '0.0.0.0' (necesaria para Linux)
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`\n======================================================`);
-    console.log(`Servidor de agendaclinicas.cl activo`);
+    console.log(`Servidor de AC activo`);
     console.log(`Escuchando en la red interna del puerto: ${PORT}`);
     console.log(`======================================================\n`);
 });
