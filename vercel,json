@@ -1,16 +1,11 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "app.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "app.js"
+      "source": "/resena/:path*",
+      "destination": "http://72.61.35*"
     }
   ]
 }
+
 

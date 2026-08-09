@@ -14,7 +14,9 @@ const app = express();
 const opcionesCors = {
     origin: [
         'http://localhost:3000', 
-        'https://agendaclinicas.cl',
+        'https://ac-resenas.vercel.app',
+        'https://ac-resenas.agendaclinicas.cl',
+        'https://nativecode-finance.agendaclinicas.cl',
         'https://www.agendaclinicas.cl',
         'https://nativecode-finance.agendaclinicas.cl/dashboard'
 
