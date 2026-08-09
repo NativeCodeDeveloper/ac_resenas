@@ -41,3 +41,7 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`Escuchando en la red interna del puerto: ${PORT}`);
     console.log(`======================================================\n`);
 });
+
+// Requerido obligatoriamente para el despliegue serverless en Vercel
+export default app;
+
