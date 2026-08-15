@@ -7,13 +7,24 @@ export default class resenaController {
 
     static async crear(req, res) {
         try {
-            const { id_usuario, titulo, comentario, calificacion } = req.body;
+            const {
+                nombre_autor,
+                nombre_consulta,
+                titulo,
+                comentario,
+                calificacion,
+            } = req.body;
+
+            const autor = typeof nombre_autor === "string" ? nombre_autor.trim() : "";
+            const consulta = typeof nombre_consulta === "string" ? nombre_consulta.trim() : "";
+            const tituloLimpio = typeof titulo === "string" ? titulo.trim() : "";
+            const comentarioLimpio = typeof comentario === "string" ? comentario.trim() : "";
 
             // Validar que todos los campos estén presentes
-            if (!id_usuario || !titulo || !comentario || !calificacion) {
+            if ((!autor && !consulta) || !tituloLimpio || !comentarioLimpio || !calificacion) {
                 return res
                     .status(400)
-                    .json({ mensaje: "Todos los campos son obligatorios" });
+                    .json({ mensaje: "Indica tu nombre o el nombre de tu consulta, además de todos los campos obligatorios" });
             }
 
             // Validar que la calificación esté en el rango de 1 a 5
@@ -24,12 +35,14 @@ export default class resenaController {
             }
 
             const modelo = new resena();
-            const nuevaResena = await modelo.crear(
-                id_usuario,
-                titulo,
-                comentario,
+            const nuevaResena = await modelo.crear({
+                id_usuario: null,
+                nombre_autor: autor || null,
+                nombre_consulta: consulta || null,
+                titulo: tituloLimpio,
+                comentario: comentarioLimpio,
                 calificacion,
-            );
+            });
 
             return res.json({
                 ok: true,
@@ -139,4 +152,3 @@ export default class resenaController {
     }
 
 }
-

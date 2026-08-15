@@ -5,7 +5,7 @@ export default class resena {
     constructor() { }
 
     // 1. Crear una nueva reseña
-    async crear(id_usuario, titulo, comentario, calificacion) {
+    async crear({ id_usuario = null, nombre_autor, nombre_consulta, titulo, comentario, calificacion }) {
         const id_seguro = uuidv4(); // Generar un UUID para la nueva reseña
 
         // Genera la fecha/hora exacta de Santiago de Chile sin importar dónde corra el servidor
@@ -14,17 +14,32 @@ export default class resena {
 
 
         const sql = `
-            INSERT INTO ac_resenas (id, id_usuario, titulo, comentario, calificacion, activo, creado_en, actualizado_en) 
-            VALUES (?, ?, ?, ?, ?, 1, ?, ?)
+            INSERT INTO ac_resenas (
+                id, id_usuario, nombre_autor, nombre_consulta,
+                titulo, comentario, calificacion, activo, creado_en, actualizado_en
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
             `;
 
         // Retornar un objeto con los datos de la nueva reseña creada
-        await db.execute(sql, [id_seguro, id_usuario, titulo, comentario, calificacion, fechaChile, fechaChile]);
+        await db.execute(sql, [
+            id_seguro,
+            id_usuario,
+            nombre_autor,
+            nombre_consulta,
+            titulo,
+            comentario,
+            calificacion,
+            fechaChile,
+            fechaChile,
+        ]);
 
         // Retornar un objeto con los datos de la nueva reseña creada
         return {
             id: id_seguro,
             id_usuario,
+            nombre_autor,
+            nombre_consulta,
             titulo,
             comentario,
             calificacion,
@@ -39,7 +54,8 @@ export default class resena {
         const condicion = esDashboard ? "1 = 1" : "activo = 1";
 
         const sql = `
-            SELECT id, id_usuario, titulo, comentario, calificacion, activo,
+            SELECT id, id_usuario, nombre_autor, nombre_consulta,
+            titulo, comentario, calificacion, activo,
             DATE_FORMAT(creado_en, '%Y-%m-%d %H:%i:%s') AS creado_en,
             DATE_FORMAT(actualizado_en, '%Y-%m-%d %H:%i:%s') AS actualizado_en
             FROM ac_resenas
