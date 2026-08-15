@@ -46,7 +46,7 @@ export default class resenaController {
     static async listar(req, res) {
         try {
             // El frontend del Dashboard enviará {"esDashboard": true} en el JSON
-            const { esDashboard } = req.body; 
+            const esDashboard = Boolean(req.esDashboard);
 
             const modelo = new resena();
             const listaResenas = await modelo.seleccionarActivas(esDashboard);

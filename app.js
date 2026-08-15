@@ -9,22 +9,37 @@ dotenv.config();
 
 const app = express();
 
-// Configuración de CORS para permitir solicitudes desde cualquier origen
-// Defino link especificos o dominio que puede consumir este backend
+// Orígenes autorizados a consumir la API desde un navegador.
+// CORS_ORIGINS permite agregar dominios sin modificar el código, separados por coma.
+const allowedOrigins = new Set([
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:5500',
+    'https://ac-resenas.vercel.app',
+    'https://ac-resenas.agendaclinicas.cl',
+    'https://nativecode-finance.agendaclinicas.cl',
+    'https://www.agendaclinicas.cl',
+    ...((process.env.CORS_ORIGINS || '')
+        .split(',')
+        .map((origin) => origin.trim())
+        .filter(Boolean)),
+]);
+
 const opcionesCors = {
-    origin: [
-        'http://localhost:3000', 
-        'https://ac-resenas.vercel.app',
-        'https://ac-resenas.agendaclinicas.cl',
-        'https://nativecode-finance.agendaclinicas.cl',
-        'https://www.agendaclinicas.cl',
-        'https://nativecode-finance.agendaclinicas.cl/dashboard'
+    origin(origin, callback) {
+        // Clientes como curl, monitoreo y llamadas servidor a servidor no envían Origin.
+        if (!origin || allowedOrigins.has(origin)) {
+            return callback(null, true);
+        }
 
-    ]
+        return callback(null, false);
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 204,
+};
 
-}
-
-app.use(cors());
+app.use(cors(opcionesCors));
 app.use(express.json());
 
 // Conectamos tus rutas
@@ -36,8 +51,8 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 
-// Un solo listen que levanta la IP universal '0.0.0.0' (necesaria para Linux)
-app.listen(PORT, '0.0.0.0', () => {
+// Nginx publica la API y se conecta a este proceso por la interfaz local.
+app.listen(PORT, '127.0.0.1', () => {
     console.log(`\n======================================================`);
     console.log(`Servidor de AC activo`);
     console.log(`Escuchando en la red interna del puerto: ${PORT}`);
@@ -46,4 +61,3 @@ app.listen(PORT, '0.0.0.0', () => {
 
 // Requerido obligatoriamente para el despliegue serverless en Vercel
 export default app;
-

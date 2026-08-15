@@ -11,7 +11,15 @@ export const verificarTokenAdmin = (req, res, next) => {
 
     try {
         // Asegúrate de definir JWT_SECRET en tu .env con la misma clave del login
-        const secreto = process.env.JWT_SECRET || 'tu_clave_secreta_del_dashboard';
+
+        const secreto = process.env.JWT_SECRET;
+
+        if (!secreto) {
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'JWT_SECRET no está configurado.'
+            });
+        }
         const usuarioVerificado = jwt.verify(token, secreto);
 
         // Validamos estrictamente que sea administrador
@@ -20,7 +28,7 @@ export const verificarTokenAdmin = (req, res, next) => {
         }
 
         req.usuarioLogueado = usuarioVerificado;
-        next(); 
+        next();
     } catch (error) {
         return res.status(403).json({ ok: false, mensaje: "Token inválido o expirado." });
     }
