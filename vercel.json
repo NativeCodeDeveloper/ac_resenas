@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/resena/:path*",
+      "destination": "http://72.61.35*"
+    }
+  ]
+}
+
+

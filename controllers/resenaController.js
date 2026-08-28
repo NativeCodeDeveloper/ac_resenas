@@ -13,11 +13,17 @@ export default class resenaController {
                 titulo,
                 comentario,
                 calificacion,
+                profesional_id,
             } = req.body;
 
             const autor = typeof nombre_autor === "string" ? nombre_autor.trim() : "";
+
             const consulta = typeof nombre_consulta === "string" ? nombre_consulta.trim() : "";
+
             const tituloLimpio = typeof titulo === "string" ? titulo.trim() : "";
+
+            const profesionalIdLimpio = typeof profesional_id === "string" ? profesional_id.trim() : profesional_id;
+
             const comentarioLimpio = typeof comentario === "string" ? comentario.trim() : "";
 
             // Validar que todos los campos estén presentes
@@ -35,8 +41,10 @@ export default class resenaController {
             }
 
             const modelo = new resena();
+
             const nuevaResena = await modelo.crear({
                 id_usuario: null,
+                profesional_id: profesionalIdLimpio || null,
                 nombre_autor: autor || null,
                 nombre_consulta: consulta || null,
                 titulo: tituloLimpio,
@@ -60,9 +68,11 @@ export default class resenaController {
         try {
             // El frontend del Dashboard enviará {"esDashboard": true} en el JSON
             const esDashboard = Boolean(req.esDashboard);
+            const { profesional_id } = req.body;
 
             const modelo = new resena();
-            const listaResenas = await modelo.seleccionarActivas(esDashboard);
+            const listaResenas = await modelo.seleccionarActivas(esDashboard, profesional_id || null);
+
             return res.json({ ok: true, resenas: listaResenas });
         } catch (error) {
             console.error("[Resenacontroller] Error al listar", error);
@@ -124,8 +134,9 @@ export default class resenaController {
      // 5. Post / resena / puntuación general
     static async obtenerPuntuacionGeneral(req, res) {
         try {
+            const { profesional_id } = req.body;
             const modelo = new resena();
-            const resultadoBD = await modelo.obtenerPuntuacionGeneral();
+            const resultadoBD = await modelo.obtenerPuntuacionGeneral(profesional_id || null);
 
             const puntuacion = Array.isArray(resultadoBD) ? resultadoBD[0] : resultadoBD;
 

@@ -25,10 +25,22 @@ const allowedOrigins = new Set([
         .filter(Boolean)),
 ]);
 
+function esOrigenPermitido(origin) {
+    if (allowedOrigins.has(origin)) return true;
+
+    try {
+        const { hostname, protocol } = new URL(origin);
+        if (protocol !== 'https:') return false;
+        return hostname === 'agendaclinicas.cl' || hostname.endsWith('.agendaclinicas.cl')
+    } catch {
+        return false;
+    }
+}
+
 const opcionesCors = {
     origin(origin, callback) {
         // Clientes como curl, monitoreo y llamadas servidor a servidor no envían Origin.
-        if (!origin || allowedOrigins.has(origin)) {
+        if (!origin || esOrigenPermitido(origin)) {
             return callback(null, true);
         }
 
@@ -38,6 +50,7 @@ const opcionesCors = {
     allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 204,
 };
+
 
 app.use(cors(opcionesCors));
 app.use(express.json());

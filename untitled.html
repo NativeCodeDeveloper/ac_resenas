@@ -1,0 +1,100 @@
+  <!DOCTYPE html>
+  <html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Prueba API de Reseñas</title>
+    <style>
+      body { font-family: system-ui, sans-serif; background:#f1f5f9; padding:32px; display:flex; justify-content:center; }
+      .card { background:#fff; padding:28px; border-radius:10px; box-shadow:0 6px 18px rgba(0,0,0,.08); width:480px; max-width:94vw; }
+      h2 { margin:0 0 16px; font-size:18px; }
+      .group { margin-bottom:12px; }
+      label { display:block; font-weight:600; margin-bottom:6px; font-size:13px; }
+      input, textarea, select { width:100%; padding:10px; box-sizing:border-box; border:1px solid #e2e8f0; border-radius:6px; font-size:14px; }
+      button { background:#2563eb; color:#fff; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:700; width:100%; }
+      pre { margin:0; white-space:pre-wrap; word-break:break-word; font:13px Menlo, Monaco, monospace; }
+      .response { margin-top:16px; padding:12px; background:#0b1220; border-radius:8px; color:#cfe9ff; }
+      .small { font-size:12px; color:#64748b; margin-top:8px; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>📝 Simulador de Reseñas — AgendaClínicas</h2>
+
+      <form id="formulario-prueba">
+        <div class="group">
+          <label for="id_usuario">ID de usuario</label>
+          <input id="id_usuario" type="number" value="999" min="1" required />
+        </div>
+
+        <div class="group">
+          <label for="titulo">Título</label>
+          <input id="titulo" type="text" value="Excelente plataforma de gestión de reservas" required />
+        </div>
+
+        <div class="group">
+          <label for="calificacion">Puntuación</label>
+          <select id="calificacion">
+            <option value="5" selected>⭐⭐⭐⭐⭐ (5)</option>
+            <option value="4">⭐⭐⭐⭐ (4)</option>
+            <option value="3">⭐⭐⭐ (3)</option>
+            <option value="2">⭐⭐ (2)</option>
+            <option value="1">⭐ (1)</option>
+          </select>
+        </div>
+
+        <div class="group">
+          <label for="comentario">Comentario</label>
+          <textarea id="comentario" rows="5" required>La plataforma funciona de manera impecable para la gestión de reservas online y fichas médicas.</textarea>
+        </div>
+
+        <button type="submit">Enviar reseña de prueba</button>
+      </form>
+
+      <div class="response">
+        <strong>Respuesta del servidor</strong>
+        <pre id="respuesta-json">Esperando envío…</pre>
+      </div>
+
+      <p class="small">
+        API: https://api-resenas.agendaclinicas.cl/resena/crear
+      </p>
+    </div>
+
+    <script>
+      const API_URL = 'https://api-resenas.agendaclinicas.cl/resena/crear';
+      const form = document.getElementById('formulario-prueba');
+      const respuestaEl = document.getElementById('respuesta-json');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        respuestaEl.textContent = 'Conectando…';
+
+        const payload = {
+          id_usuario: Number(document.getElementById('id_usuario').value),
+          titulo: document.getElementById('titulo').value.trim(),
+          comentario: document.getElementById('comentario').value.trim(),
+          calificacion: Number(document.getElementById('calificacion').value)
+        };
+
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${data.mensaje || 'Error desconocido'}`);
+          }
+
+          respuestaEl.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+          respuestaEl.textContent = `Error: ${error.message}`;
+        }
+      });
+    </script>
+  </body>
+  </html>
